@@ -1,23 +1,72 @@
-export default function Login() {
+"use client";
+
+import { useState } from "react";
+import { supabase } from "@/lib/supabase";
+
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function signUp() {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      alert(error.message);
+    } else {
+      alert("Account created successfully! Check your email.");
+    }
+  }
+
+  async function signIn() {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      alert(error.message);
+    } else {
+      alert("Login Successful!");
+      window.location.href = "/dashboard";
+    }
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+    <div className="min-h-screen flex items-center justify-center bg-black">
       <div className="bg-gray-900 p-8 rounded-xl w-96">
-        <h1 className="text-3xl font-bold mb-6">Login</h1>
+        <h1 className="text-3xl text-white font-bold mb-6">
+          Login
+        </h1>
 
         <input
+          className="w-full p-3 mb-4 rounded bg-gray-800 text-white"
           type="email"
           placeholder="Email"
-          className="w-full p-3 mb-4 rounded bg-gray-800"
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
+          className="w-full p-3 mb-6 rounded bg-gray-800 text-white"
           type="password"
           placeholder="Password"
-          className="w-full p-3 mb-4 rounded bg-gray-800"
+          onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button className="w-full bg-blue-600 p-3 rounded">
+        <button
+          onClick={signIn}
+          className="w-full bg-blue-600 text-white p-3 rounded mb-3"
+        >
           Login
+        </button>
+
+        <button
+          onClick={signUp}
+          className="w-full bg-green-600 text-white p-3 rounded"
+        >
+          Create Account
         </button>
       </div>
     </div>

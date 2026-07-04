@@ -1,33 +1,53 @@
+"use client";
+
+import { useState } from "react";
+
 export default function ChatPage() {
+  const [message, setMessage] = useState("");
+  const [reply, setReply] = useState("");
+
+  const handleAsk = async () => {
+    if (!message) return;
+
+    setReply("Thinking...");
+
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message }),
+    });
+
+    const data = await res.json();
+    setReply(data.reply);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex flex-col">
+    <div className="min-h-screen bg-black text-white p-10">
+      <h1 className="text-4xl font-bold mb-8">🤖 AI Chat Assistant</h1>
 
-      <div className="bg-blue-600 p-5 text-3xl font-bold">
-        AI Career Chat
-      </div>
+      <textarea
+        className="w-full p-4 rounded bg-gray-900 text-white"
+        rows={5}
+        placeholder="Ask anything..."
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
 
-      <div className="flex-1 p-6">
+      <button
+        onClick={handleAsk}
+        className="mt-4 bg-blue-600 px-6 py-3 rounded"
+      >
+        Ask AI
+      </button>
 
-        <div className="bg-gray-900 p-5 rounded-lg mb-5">
-          👋 Hello Narendra! Ask me anything about coding, resume or interviews.
+      {reply && (
+        <div className="mt-8 bg-gray-900 p-6 rounded">
+          <h2 className="text-xl font-bold mb-2">AI Reply:</h2>
+          <p>{reply}</p>
         </div>
-
-      </div>
-
-      <div className="p-5 flex gap-3">
-
-        <input
-          type="text"
-          placeholder="Ask anything..."
-          className="flex-1 p-3 rounded bg-gray-800"
-        />
-
-        <button className="bg-blue-600 px-6 rounded">
-          Send
-        </button>
-
-      </div>
-
+      )}
     </div>
   );
 }
